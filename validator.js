@@ -26,16 +26,20 @@ export function validateEmail(email) {
   if (typeof email !== "string") {
     return false;
   }
-  const trimmedEmail = email.toLowerCase().trim();
-  // Regex para checar caracteres válidos (letras, números, ponto, hífen, e underscore)
-  // Exclui acentuação, espaços e outros caracteres especiais comuns antes do @
-  const emailRegex =
-    /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+  // Verifica caracteres proibidos em qualquer parte
+  const caracteresProibidos = /[ *?()\[\]{}\\|;:,<>"]/;
+  if (caracteresProibidos.test(email)) {
+    return false;
+  }
 
-  return emailRegex.test(trimmedEmail);
+  // Verifica estrutura básica do email
+  const estruturaEmail =
+    /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+  return estruturaEmail.test(email);
 }
 
-// 3. FUNÇÃO DE VALIDAÇÃO DE CPF (SIMPLIFICADA)
+// 3. FUNÇÃO DE VALIDAÇÃO DE CPF
 // Verifica se o CPF tem o tamanho e o formato esperado
 export function validateCPF(cpf) {
   if (typeof cpf !== "string") {
@@ -52,36 +56,22 @@ export function validateCPF(cpf) {
     return false;
   }
 
-  let sum = 0;
-  let remainder;
+  const calcularDV = (cpfParcial, pesoInicial) => {
+    let soma = 0;
+    for (let i = 0; i < cpfParcial.length; i++) {
+      soma += parseInt(cpfParcial.charAt(i)) * (pesoInicial - i);
+    }
+    const resto = soma % 11;
+    return resto < 2 ? 0 : 11 - resto;
+  };
 
-  // 3. Cálculo do Primeiro Dígito Verificador (DV1)
-  for (let i = 1; i <= 9; i++) {
-    sum += parseInt(cleanCPF.substring(i - 1, i)) * (11 - i);
-  }
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) {
-    remainder = 0;
-  }
-  if (remainder !== parseInt(cleanCPF.substring(9, 10))) {
-    return false; // DV1 Incorreto
-  }
+  const dv1 = calcularDV(cleanCPF.substring(0, 9), 10);
+  const dv2 = calcularDV(cleanCPF.substring(0, 10), 11);
 
-  sum = 0;
-
-  // 4. Cálculo do Segundo Dígito Verificador (DV2)
-  for (let i = 1; i <= 10; i++) {
-    sum += parseInt(cleanCPF.substring(i - 1, i)) * (12 - i);
-  }
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) {
-    remainder = 0;
-  }
-  if (remainder !== parseInt(cleanCPF.substring(10, 11))) {
-    return false; // DV2 Incorreto
-  }
-
-  return true; // CPF Válido (Formato e DVs conferem)
+  return (
+    dv1 === parseInt(cleanCPF.charAt(9)) &&
+    dv2 === parseInt(cleanCPF.charAt(10))
+  );
 }
 
 // 4. FUNÇÃO PRINCIPAL (EXEMPLO DE USO)
