@@ -26,21 +26,21 @@ export function validateEmail(email) {
   if (typeof email !== "string") {
     return false;
   }
-  // Verifica caracteres proibidos em qualquer parte
-  const caracteresProibidos = /[ *?()\[\]{}\\|;:,<>"]/;
-  if (caracteresProibidos.test(email)) {
-    return false;
-  }
+  // Partes da expressão regular
+  const caracteresProibidos = '[ \\*\\?\\(\\)\\[\\]\\{\\}\\\\\\|;:,<>"]';
+  const parteLocal = "[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+";
+  const dominio = "[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?";
+  const subdominios = "(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*";
 
-  // Verifica estrutura básica do email
-  const estruturaEmail =
-    /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  const regex = new RegExp(
+    `^(?!.*${caracteresProibidos})${parteLocal}@${dominio}${subdominios}$`
+  );
 
-  return estruturaEmail.test(email);
+  return regex.test(email);
 }
 
 // 3. FUNÇÃO DE VALIDAÇÃO DE CPF
-// Verifica se o CPF tem o tamanho e o formato esperado
+// Verifica se o CPF tem o tamanho e o formato esperado, e faz a checagem de DV
 export function validateCPF(cpf) {
   if (typeof cpf !== "string") {
     return false;
