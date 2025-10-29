@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo: Data Validator JS (Fábio Galdino)</title>
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Validador de Dados Demo</h1>
+      <p>
+        Teste as funções `validateEmail` e `validateCPF` do meu módulo
+        JavaScript puro.
+        <a
+          href="https://github.com/fsgaldino/Data-Validator-JS/tree/main/validator.js"
+          target="_blank"
+          >Ver código fonte</a
+        >.
+      </p>
+
+      <form id="validationForm">
+        <label for="email">E-mail:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Digite seu e-mail"
+          required
+        />
+
+        <label for="cpf">CPF (apenas números):</label>
+        <input
+          type="text"
+          id="cpf"
+          name="cpf"
+          placeholder="Ex: 12345678900"
+          maxlength="11"
+          required
+        />
+
+        <button type="submit">Validar Dados</button>
+      </form>
+
+      <div id="validation-message"></div>
+    </div>
+
+    <script type="module">
+      // Importa as funções do seu arquivo validator.js
+      import { validateEmail, validateCPF } from "./validator.js";
+
+      const form = document.getElementById("validationForm");
+      const emailInput = document.getElementById("email");
+      const cpfInput = document.getElementById("cpf");
+      const messageDiv = document.getElementById("validation-message");
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault(); // Impede o envio padrão do formulário
+
+        const email = emailInput.value;
+        const cpf = cpfInput.value;
+        let errors = [];
+
+        // 1. Testa a função de E-mail
+        if (!validateEmail(email)) {
+          errors.push("E-mail é inválido.");
+        }
+
+        // 2. Testa a função de CPF
+        if (!validateCPF(cpf)) {
+          errors.push("CPF é inválido ou não possui 11 dígitos.");
+        }
+
+        // Exibir resultado
+        messageDiv.className = "";
+        if (errors.length === 0) {
+          messageDiv.classList.add("success");
+          messageDiv.textContent = "✅ Sucesso! E-mail e CPF válidos.";
+        } else {
+          messageDiv.classList.add("error");
+          messageDiv.textContent = `❌ Erro(s) de Validação: ${errors.join(
+            " | "
+          )}`;
+        }
+      });
+    </script>
+  </body>
+</html>
