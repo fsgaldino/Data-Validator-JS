@@ -35,3 +35,8 @@ if (isCpfValid) {
 } else {
     console.log("CPF Inválido. Falha de Sistema!");
 }
+
+---
+
+**👋 Precisa de uma ferramenta personalizada para otimizar a produtividade da sua equipe?**
+Meu _background_ em Suporte/Agilidade garante que eu entendo sua dor de negócio. Entre em contato no meu perfil do 99Freelas: https://www.99freelas.com.br/user/fabiogaldino
